@@ -47,32 +47,51 @@ class NoteRole(IntEnum):
     MarkdownLinkByPath = Qt.ItemDataRole.UserRole + 5
 
 
-def search_notes(db_path: Path, query: str, limit: int = 50) -> list[NoteResult]:
-    """Search notes by path using the v_note_id_path_mapping view."""
+def search_notes(
+    db_path: Path, query: str, limit: int = 50, candidate_limit: int = 500
+) -> list[NoteResult]:
+    """Search notes by path using fuzzy matching.
+
+    Uses a two-phase approach for performance:
+    1. SQL pre-filter with subsequence pattern to reduce candidates
+    2. Python fuzzy scoring to rank and sort results
+    """
+    from palette.fuzzy import build_sql_pattern, rank_matches
+
     if not query.strip():
         return []
 
     conn = sqlite3.connect(db_path)
     try:
         cursor = conn.cursor()
-        # Use LIKE for substring matching with wildcards
-        search_pattern = f"%{query}%"
+        # Phase 1: SQL pre-filter with subsequence pattern
+        search_pattern = build_sql_pattern(query)
         cursor.execute(
             """
             SELECT id, title, full_path
             FROM v_note_id_path_mapping
-            WHERE full_path LIKE ?
+            WHERE LOWER(full_path) LIKE ? ESCAPE '\\'
             ORDER BY full_path
             LIMIT ?
             """,
-            (search_pattern, limit),
+            (search_pattern, candidate_limit),
         )
-        return [
+        candidates = [
             NoteResult(id=row[0], title=row[1], full_path=row[2])
             for row in cursor.fetchall()
         ]
     finally:
         conn.close()
+
+    # Phase 2: Fuzzy scoring and ranking
+    ranked = rank_matches(
+        query=query,
+        items=candidates,
+        key=lambda note: note.full_path,
+        limit=limit,
+    )
+
+    return [note for note, _score in ranked]
 
 
 class NoteSearchModel(QAbstractListModel):
