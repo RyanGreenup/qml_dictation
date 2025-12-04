@@ -113,6 +113,27 @@ ApplicationWindow {
                 linkByPath = !linkByPath
             }
 
+            Keys.onPressed: function(event) {
+                if (event.modifiers & Qt.ControlModifier) {
+                    // Ctrl+P or Ctrl+K = up
+                    if (event.key === Qt.Key_P || event.key === Qt.Key_K) {
+                        if (selectedIndex > 0) {
+                            selectedIndex--
+                            listView.positionViewAtIndex(selectedIndex, ListView.Contain)
+                        }
+                        event.accepted = true
+                    }
+                    // Ctrl+N or Ctrl+J = down
+                    else if (event.key === Qt.Key_N || event.key === Qt.Key_J) {
+                        if (selectedIndex < listView.count - 1) {
+                            selectedIndex++
+                            listView.positionViewAtIndex(selectedIndex, ListView.Contain)
+                        }
+                        event.accepted = true
+                    }
+                }
+            }
+
             Component.onCompleted: {
                 forceActiveFocus()
             }
@@ -260,7 +281,7 @@ ApplicationWindow {
                 }
 
                 Text {
-                    text: "Tab Toggle  ↑↓ ⏎ Esc"
+                    text: "Tab Toggle  ↑↓/^pk/^nj ⏎ Esc"
                     color: "#6c7086"
                     font.pixelSize: 11
                 }
