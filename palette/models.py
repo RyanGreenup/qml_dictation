@@ -67,7 +67,10 @@ def search_notes(db_path: Path, query: str, limit: int = 50) -> list[NoteResult]
             """,
             (search_pattern, limit),
         )
-        return [NoteResult(id=row[0], title=row[1], full_path=row[2]) for row in cursor.fetchall()]
+        return [
+            NoteResult(id=row[0], title=row[1], full_path=row[2])
+            for row in cursor.fetchall()
+        ]
     finally:
         conn.close()
 
@@ -84,13 +87,19 @@ class NoteSearchModel(QAbstractListModel):
         """Set the database path for searches."""
         self._db_path = path
 
-    def rowCount(self, parent: QModelIndex | QPersistentModelIndex = QModelIndex()) -> int:
+    def rowCount(
+        self, parent: QModelIndex | QPersistentModelIndex = QModelIndex()
+    ) -> int:
         """Return the number of results."""
         if parent.isValid():
             return 0
         return len(self._results)
 
-    def data(self, index: QModelIndex | QPersistentModelIndex, role: int = Qt.ItemDataRole.DisplayRole) -> Any:
+    def data(
+        self,
+        index: QModelIndex | QPersistentModelIndex,
+        role: int = Qt.ItemDataRole.DisplayRole,
+    ) -> Any:
         """Return data for the given index and role."""
         if not index.isValid() or index.row() >= len(self._results):
             return None

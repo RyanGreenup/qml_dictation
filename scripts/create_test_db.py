@@ -147,7 +147,9 @@ def create_database(db_path: Path) -> None:
     # Verify the view works
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
-    cursor.execute("SELECT id, title, full_path FROM v_note_id_path_mapping ORDER BY full_path")
+    cursor.execute(
+        "SELECT id, title, full_path FROM v_note_id_path_mapping ORDER BY full_path"
+    )
     print("\nSample data:")
     for row in cursor.fetchall():
         print(f"  [{row[1]}][{row[0][:8]}...] -> {row[2]}")
