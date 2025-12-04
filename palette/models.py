@@ -32,6 +32,10 @@ class NoteResult:
         """Return the markdown link format [title][id]."""
         return f"[{self.title}][{self.id}]"
 
+    def to_markdown_link_by_path(self) -> str:
+        """Return the markdown link format [title][path]."""
+        return f"[{self.title}][{self.full_path}]"
+
 
 class NoteRole(IntEnum):
     """Custom roles for the note model."""
@@ -40,6 +44,7 @@ class NoteRole(IntEnum):
     Title = Qt.ItemDataRole.UserRole + 2
     FullPath = Qt.ItemDataRole.UserRole + 3
     MarkdownLink = Qt.ItemDataRole.UserRole + 4
+    MarkdownLinkByPath = Qt.ItemDataRole.UserRole + 5
 
 
 def search_notes(db_path: Path, query: str, limit: int = 50) -> list[NoteResult]:
@@ -100,6 +105,8 @@ class NoteSearchModel(QAbstractListModel):
             return result.title
         if role == NoteRole.MarkdownLink:
             return result.to_markdown_link()
+        if role == NoteRole.MarkdownLinkByPath:
+            return result.to_markdown_link_by_path()
 
         return None
 
@@ -110,6 +117,7 @@ class NoteSearchModel(QAbstractListModel):
             NoteRole.Title: QByteArray(b"noteTitle"),
             NoteRole.FullPath: QByteArray(b"fullPath"),
             NoteRole.MarkdownLink: QByteArray(b"markdownLink"),
+            NoteRole.MarkdownLinkByPath: QByteArray(b"markdownLinkByPath"),
         }
 
     @Slot(str)
@@ -127,6 +135,13 @@ class NoteSearchModel(QAbstractListModel):
         """Get the markdown link for a specific row."""
         if 0 <= row < len(self._results):
             return self._results[row].to_markdown_link()
+        return ""
+
+    @Slot(int, result=str)
+    def getMarkdownLinkByPath(self, row: int) -> str:
+        """Get the markdown link by path for a specific row."""
+        if 0 <= row < len(self._results):
+            return self._results[row].to_markdown_link_by_path()
         return ""
 
     resultCountChanged = Signal()

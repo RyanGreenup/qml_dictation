@@ -70,6 +70,18 @@ def hide() -> None:
 
 
 @app.command()
+def stop() -> None:
+    """Stop the palette server."""
+    from palette.ipc import send_stop
+
+    if send_stop():
+        typer.echo("Stopped palette server")
+    else:
+        typer.echo("Failed to stop - is the server running?", err=True)
+        raise typer.Exit(1)
+
+
+@app.command()
 def status() -> None:
     """Check if the palette server is running."""
     from palette.ipc import is_server_running

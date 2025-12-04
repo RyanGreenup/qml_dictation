@@ -25,6 +25,7 @@ class IPCServer(QObject):
     toggle_requested = Signal()
     show_requested = Signal()
     hide_requested = Signal()
+    quit_requested = Signal()
 
     def __init__(self, parent: QObject | None = None) -> None:
         super().__init__(parent)
@@ -96,6 +97,8 @@ class IPCServer(QObject):
             self.show_requested.emit()
         elif cmd == "HIDE":
             self.hide_requested.emit()
+        elif cmd == "QUIT" or cmd == "STOP":
+            self.quit_requested.emit()
 
 
 def send_command(command: str, timeout: float = 1.0) -> bool:
@@ -129,6 +132,11 @@ def send_show() -> bool:
 def send_hide() -> bool:
     """Send a hide command to the palette server."""
     return send_command("HIDE")
+
+
+def send_stop() -> bool:
+    """Send a stop command to the palette server."""
+    return send_command("STOP")
 
 
 def is_server_running() -> bool:

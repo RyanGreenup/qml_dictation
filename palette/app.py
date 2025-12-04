@@ -61,6 +61,7 @@ class PaletteApp:
         self._ipc_server.toggle_requested.connect(self._toggle_window)
         self._ipc_server.show_requested.connect(self._show_window)
         self._ipc_server.hide_requested.connect(self._hide_window)
+        self._ipc_server.quit_requested.connect(self._quit_app)
 
         if not self._ipc_server.start():
             print("Warning: Failed to start IPC server", file=sys.stderr)
@@ -125,3 +126,9 @@ class PaletteApp:
         window = self._get_root_window()
         if window is not None:
             window.setProperty("visible", False)
+
+    @Slot()
+    def _quit_app(self) -> None:
+        """Quit the application."""
+        if self._app is not None:
+            self._app.quit()

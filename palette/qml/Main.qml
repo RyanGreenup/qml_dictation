@@ -14,6 +14,7 @@ ApplicationWindow {
     color: "#1e1e2e"
 
     property int selectedIndex: 0
+    property bool linkByPath: false  // false = by ID, true = by path
 
     // Close on escape or focus loss
     onActiveFocusItemChanged: {
@@ -45,7 +46,9 @@ ApplicationWindow {
 
     function selectItem(index) {
         if (index >= 0 && index < listView.count) {
-            var link = searchModel.getMarkdownLink(index)
+            var link = linkByPath
+                ? searchModel.getMarkdownLinkByPath(index)
+                : searchModel.getMarkdownLink(index)
             if (link) {
                 clipboard.copy(link)
                 root.hide()
@@ -106,6 +109,10 @@ ApplicationWindow {
                 searchField.text = ""
             }
 
+            Keys.onTabPressed: {
+                linkByPath = !linkByPath
+            }
+
             Component.onCompleted: {
                 forceActiveFocus()
             }
@@ -152,7 +159,7 @@ ApplicationWindow {
 
                     Text {
                         Layout.fillWidth: true
-                        text: markdownLink
+                        text: linkByPath ? markdownLinkByPath : markdownLink
                         color: "#89b4fa"
                         font.pixelSize: 12
                         font.family: "monospace"
@@ -182,13 +189,14 @@ ApplicationWindow {
         // Status bar
         Rectangle {
             Layout.fillWidth: true
-            height: 24
+            height: 28
             color: "#313244"
             radius: 4
 
             RowLayout {
                 anchors.fill: parent
                 anchors.margins: 4
+                spacing: 8
 
                 Text {
                     text: listView.count > 0 ? listView.count + " results" : ""
@@ -198,8 +206,61 @@ ApplicationWindow {
 
                 Item { Layout.fillWidth: true }
 
+                // Link format toggle
+                RowLayout {
+                    spacing: 4
+
+                    Text {
+                        text: "ID"
+                        color: linkByPath ? "#6c7086" : "#89b4fa"
+                        font.pixelSize: 11
+                        font.bold: !linkByPath
+                    }
+
+                    Switch {
+                        id: linkModeSwitch
+                        checked: linkByPath
+                        onCheckedChanged: linkByPath = checked
+
+                        indicator: Rectangle {
+                            implicitWidth: 32
+                            implicitHeight: 16
+                            x: linkModeSwitch.leftPadding
+                            y: parent.height / 2 - height / 2
+                            radius: 8
+                            color: linkModeSwitch.checked ? "#89b4fa" : "#45475a"
+
+                            Rectangle {
+                                x: linkModeSwitch.checked ? parent.width - width - 2 : 2
+                                y: 2
+                                width: 12
+                                height: 12
+                                radius: 6
+                                color: "#cdd6f4"
+
+                                Behavior on x {
+                                    NumberAnimation { duration: 100 }
+                                }
+                            }
+                        }
+                    }
+
+                    Text {
+                        text: "Path"
+                        color: linkByPath ? "#89b4fa" : "#6c7086"
+                        font.pixelSize: 11
+                        font.bold: linkByPath
+                    }
+                }
+
                 Text {
-                    text: "↑↓ Navigate  ⏎ Select  Esc Close"
+                    text: "│"
+                    color: "#45475a"
+                    font.pixelSize: 11
+                }
+
+                Text {
+                    text: "Tab Toggle  ↑↓ ⏎ Esc"
                     color: "#6c7086"
                     font.pixelSize: 11
                 }
