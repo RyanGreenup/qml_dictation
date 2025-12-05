@@ -28,13 +28,23 @@ class NoteResult:
     title: str
     full_path: str
 
-    def to_markdown_link(self) -> str:
-        """Return the markdown link format [title][id]."""
-        return f"[{self.title}][{self.id}]"
+    @property
+    def adjusted_title(self) -> str:
+        """Return title, or parent folder name if title is 'index'."""
+        if self.title.lower() == "index":
+            # Extract parent folder name from full_path
+            parts = self.full_path.rstrip("/").split("/")
+            if len(parts) >= 2:
+                return parts[-2]
+        return self.title
 
-    def to_markdown_link_by_path(self) -> str:
-        """Return the markdown link format [title][path]."""
-        return f"[{self.title}][{self.full_path}]"
+    def to_markdown_link(self) -> str:
+        """Return the markdown link format [title](id)."""
+        return f"[{self.adjusted_title}]({self.id})"
+
+    def to_org_link(self) -> str:
+        """Return the org-mode link format [[file:id][title]]."""
+        return f"[[file:{self.id}][{self.adjusted_title}]]"
 
 
 class NoteRole(IntEnum):
@@ -44,7 +54,7 @@ class NoteRole(IntEnum):
     Title = Qt.ItemDataRole.UserRole + 2
     FullPath = Qt.ItemDataRole.UserRole + 3
     MarkdownLink = Qt.ItemDataRole.UserRole + 4
-    MarkdownLinkByPath = Qt.ItemDataRole.UserRole + 5
+    OrgLink = Qt.ItemDataRole.UserRole + 5
 
 
 def search_notes(
@@ -133,8 +143,8 @@ class NoteSearchModel(QAbstractListModel):
             return result.title
         if role == NoteRole.MarkdownLink:
             return result.to_markdown_link()
-        if role == NoteRole.MarkdownLinkByPath:
-            return result.to_markdown_link_by_path()
+        if role == NoteRole.OrgLink:
+            return result.to_org_link()
 
         return None
 
@@ -145,7 +155,7 @@ class NoteSearchModel(QAbstractListModel):
             NoteRole.Title: QByteArray(b"noteTitle"),
             NoteRole.FullPath: QByteArray(b"fullPath"),
             NoteRole.MarkdownLink: QByteArray(b"markdownLink"),
-            NoteRole.MarkdownLinkByPath: QByteArray(b"markdownLinkByPath"),
+            NoteRole.OrgLink: QByteArray(b"orgLink"),
         }
 
     @Slot(str)
@@ -166,10 +176,10 @@ class NoteSearchModel(QAbstractListModel):
         return ""
 
     @Slot(int, result=str)
-    def getMarkdownLinkByPath(self, row: int) -> str:
-        """Get the markdown link by path for a specific row."""
+    def getOrgLink(self, row: int) -> str:
+        """Get the org-mode link for a specific row."""
         if 0 <= row < len(self._results):
-            return self._results[row].to_markdown_link_by_path()
+            return self._results[row].to_org_link()
         return ""
 
     resultCountChanged = Signal()

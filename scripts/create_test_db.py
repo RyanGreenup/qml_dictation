@@ -120,8 +120,10 @@ def create_database(db_path: Path) -> None:
         (uuid.uuid4().hex, "readme", "Project readme", "# Readme\n\nThis is a test.", "md", None, user_id),
         (uuid.uuid4().hex, "todo", "Things to do", "- [ ] Task 1\n- [ ] Task 2", "md", None, user_id),
         # Project notes
+        (uuid.uuid4().hex, "index", "Python projects index", "# Python Projects\n\nIndex of python projects.", "md", folder_map["python"], user_id),
         (uuid.uuid4().hex, "palette", "Palette project notes", "# Palette\n\nLink palette app.", "md", folder_map["python"], user_id),
         (uuid.uuid4().hex, "fastapi-app", "FastAPI project", "# FastAPI App\n\nREST API.", "md", folder_map["python"], user_id),
+        (uuid.uuid4().hex, "index", "Rust projects index", "# Rust Projects\n\nIndex of rust projects.", "md", folder_map["rust"], user_id),
         (uuid.uuid4().hex, "cli-tool", "Rust CLI tool", "# CLI Tool\n\nCommand line tool in Rust.", "md", folder_map["rust"], user_id),
         # Journal notes
         (uuid.uuid4().hex, "01-15", "January 15 journal", "Today I worked on...", "md", folder_map["2024"], user_id),
@@ -129,6 +131,7 @@ def create_database(db_path: Path) -> None:
         (uuid.uuid4().hex, "12-01", "December 1 journal", "Starting the month...", "md", folder_map["2025"], user_id),
         (uuid.uuid4().hex, "12-04", "December 4 journal", "Building palette app...", "md", folder_map["2025"], user_id),
         # Reference notes
+        (uuid.uuid4().hex, "index", "Reference index", "# Reference\n\nIndex of references.", "md", folder_map["reference"], user_id),
         (uuid.uuid4().hex, "vim-shortcuts", "Vim shortcuts reference", "# Vim Shortcuts\n\n- `:w` save\n- `:q` quit", "md", folder_map["reference"], user_id),
         (uuid.uuid4().hex, "git-commands", "Git commands reference", "# Git Commands\n\n- `git status`\n- `git add`", "md", folder_map["reference"], user_id),
         (uuid.uuid4().hex, "sql-reference", "SQL reference", "# SQL\n\n- SELECT\n- INSERT", "md", folder_map["reference"], user_id),

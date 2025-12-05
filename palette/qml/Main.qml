@@ -14,7 +14,7 @@ ApplicationWindow {
     color: "#1e1e2e"
 
     property int selectedIndex: 0
-    property bool linkByPath: false  // false = by ID, true = by path
+    property bool useOrgMode: false  // false = Markdown, true = Org
 
     // Close on escape or focus loss
     onActiveFocusItemChanged: {
@@ -46,8 +46,8 @@ ApplicationWindow {
 
     function selectItem(index) {
         if (index >= 0 && index < listView.count) {
-            var link = linkByPath
-                ? searchModel.getMarkdownLinkByPath(index)
+            var link = useOrgMode
+                ? searchModel.getOrgLink(index)
                 : searchModel.getMarkdownLink(index)
             if (link) {
                 clipboard.copy(link)
@@ -110,7 +110,7 @@ ApplicationWindow {
             }
 
             Keys.onTabPressed: {
-                linkByPath = !linkByPath
+                useOrgMode = !useOrgMode
             }
 
             Keys.onPressed: function(event) {
@@ -180,7 +180,7 @@ ApplicationWindow {
 
                     Text {
                         Layout.fillWidth: true
-                        text: linkByPath ? markdownLinkByPath : markdownLink
+                        text: useOrgMode ? orgLink : markdownLink
                         color: "#89b4fa"
                         font.pixelSize: 12
                         font.family: "monospace"
@@ -232,16 +232,16 @@ ApplicationWindow {
                     spacing: 4
 
                     Text {
-                        text: "ID"
-                        color: linkByPath ? "#6c7086" : "#89b4fa"
+                        text: "MD"
+                        color: useOrgMode ? "#6c7086" : "#89b4fa"
                         font.pixelSize: 11
-                        font.bold: !linkByPath
+                        font.bold: !useOrgMode
                     }
 
                     Switch {
                         id: linkModeSwitch
-                        checked: linkByPath
-                        onCheckedChanged: linkByPath = checked
+                        checked: useOrgMode
+                        onCheckedChanged: useOrgMode = checked
 
                         indicator: Rectangle {
                             implicitWidth: 32
@@ -267,10 +267,10 @@ ApplicationWindow {
                     }
 
                     Text {
-                        text: "Path"
-                        color: linkByPath ? "#89b4fa" : "#6c7086"
+                        text: "Org"
+                        color: useOrgMode ? "#89b4fa" : "#6c7086"
                         font.pixelSize: 11
-                        font.bold: linkByPath
+                        font.bold: useOrgMode
                     }
                 }
 
