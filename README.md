@@ -75,7 +75,24 @@ submap = reset
 
 ```
 
+### Systemd
 
+Install the service:
+
+```bash
+cp lilium-palette.service ~/.config/systemd/user/
+# Edit the service file to set your database path
+systemctl --user daemon-reload
+systemctl --user enable --now lilium-palette
+```
+
+Control:
+
+```bash
+systemctl --user status lilium-palette
+systemctl --user restart lilium-palette
+journalctl --user -u lilium-palette -f
+```
 
 ## Keybindings
 

@@ -1,0 +1,12 @@
+[Unit]
+Description=Lilium Palette - Note link search
+After=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=%h/.local/bin/lilium-palette serve %h/notes/notes.db
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target
