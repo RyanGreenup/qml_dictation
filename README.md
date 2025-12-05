@@ -14,9 +14,9 @@ Search notes, insert markdown links.
 
    ```bash
    uv tool install .
-   palette serve
-   palette toggle
-   palette stop
+   lilium-palette serve
+   lilium-palette toggle
+   lilium-palette stop
    ```
 
 ## Usage
@@ -25,17 +25,17 @@ Search notes, insert markdown links.
 Start the server:
 
 ```bash
-palette serve /path/to/notes.db
+lilium-palette serve /path/to/notes.db
 ```
 
 Control from another terminal:
 
 ```bash
-palette toggle   # show/hide
-palette show
-palette hide
-palette stop
-palette status
+lilium-palette toggle   # show/hide
+lilium-palette show
+lilium-palette hide
+lilium-palette stop
+lilium-palette status
 ```
 
 ### Integration With Hyprland
@@ -50,7 +50,7 @@ Add something like this to the config and `s+a l` will trigger the palette.
 $notes_db = ~/notes/notes.db
 
 # Start palette server on login (if not already running)
-exec-once = palette status || palette serve $notes_db &
+exec-once = lilium-palette status || lilium-palette serve $notes_db &
 
 # Enter notes submap with Super+N or Alt+F9
 $map_name = notes
@@ -60,11 +60,11 @@ bind = ALT, F9, submap, $map_name
 submap = $map_name
 
 # l = link - toggle the link palette
-bind = , l, exec, palette toggle
+bind = , l, exec, lilium-palette toggle
 bind = , l, submap, reset
 
 # Direct show/hide controls
-bind = SHIFT, l, exec, palette show
+bind = SHIFT, l, exec, lilium-palette show
 bind = SHIFT, l, submap, reset
 
 # Escape to exit submap without action

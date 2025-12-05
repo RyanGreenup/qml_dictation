@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 def get_socket_path() -> Path:
     """Get the socket path for IPC communication."""
     uid = os.getuid()
-    return Path(f"/tmp/palette-{uid}.sock")
+    return Path(f"/tmp/lilium-palette-{uid}.sock")
 
 
 class IPCServer(QObject):

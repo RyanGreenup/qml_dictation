@@ -9,7 +9,7 @@ from typing import Annotated
 import typer
 
 app = typer.Typer(
-    name="palette",
+    name="lilium-palette",
     help="Link palette for searching notes and generating markdown links.",
 )
 
