@@ -94,6 +94,26 @@ systemctl --user restart lilium-palette
 journalctl --user -u lilium-palette -f
 ```
 
+### OpenRC
+
+```bash
+sudo cp openrc/lilium-palette /etc/init.d/
+sudo chmod +x /etc/init.d/lilium-palette
+# Edit to set your database path
+sudo rc-update add lilium-palette default
+sudo rc-service lilium-palette start
+```
+
+### Runit
+
+```bash
+mkdir -p ~/.local/sv
+cp -r runit/lilium-palette ~/.local/sv/
+chmod +x ~/.local/sv/lilium-palette/run
+# Edit run script to set your database path
+ln -s ~/.local/sv/lilium-palette ~/service/
+```
+
 ## Keybindings
 
 | Key     | Action                     |

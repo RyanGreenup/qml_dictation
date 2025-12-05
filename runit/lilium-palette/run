@@ -1,0 +1,2 @@
+#!/bin/sh
+exec chpst -u "$USER" "$HOME/.local/bin/lilium-palette" serve "$HOME/notes/notes.db"
