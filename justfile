@@ -13,7 +13,8 @@ uninstall:
     uv pip uninstall lilium-palette
 
 # Reinstall the package
-reinstall: uninstall install
+reinstall: uninstall
+    uv tool install . -U --refresh --force
 
 # Run type checker
 check:
