@@ -20,6 +20,7 @@ Search notes, insert markdown links.
    ```
 
 ## Usage
+### Overview
 
 Start the server:
 
@@ -37,6 +38,45 @@ palette stop
 palette status
 ```
 
+### Integration With Hyprland
+
+Add something like this to the config and `s+a l` will trigger the palette.
+
+```conf
+
+# Notes mode - keybindings for note-taking workflow
+
+# Database path for the palette server
+$notes_db = ~/notes/notes.db
+
+# Start palette server on login (if not already running)
+exec-once = palette status || palette serve $notes_db &
+
+# Enter notes submap with Super+N or Alt+F9
+$map_name = notes
+bind = $s, a, submap, $map_name
+bind = ALT, F9, submap, $map_name
+
+submap = $map_name
+
+# l = link - toggle the link palette
+bind = , l, exec, palette toggle
+bind = , l, submap, reset
+
+# Direct show/hide controls
+bind = SHIFT, l, exec, palette show
+bind = SHIFT, l, submap, reset
+
+# Escape to exit submap without action
+bind = , escape, submap, reset
+
+submap = reset
+# ...........................................................................
+
+```
+
+
+
 ## Keybindings
 
 | Key     | Action                     |
@@ -45,6 +85,12 @@ palette status
 | Enter   | Copy link, close           |
 | Escape  | Close                      |
 | Tab     | Toggle ID/path link format |
+
+
+
+
+
+
 
 ## Link Formats
 
