@@ -91,7 +91,7 @@ Control:
 ```bash
 systemctl --user status lilium-palette
 systemctl --user restart lilium-palette
-journalctl --user -u lilium-palette -f
+jlournalctl --user -u lilium-palette -f
 ```
 
 ### OpenRC

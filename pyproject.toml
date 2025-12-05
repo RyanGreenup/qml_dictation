@@ -1,7 +1,7 @@
 [project]
-name = "palette"
+name = "lilium-palette"
 version = "0.1.0"
-description = "Add your description here"
+description = "Link palette for searching notes and generating markdown/org links"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
@@ -10,10 +10,13 @@ dependencies = [
 ]
 
 [project.scripts]
-lilium-palette = "palette.cli:app"
+lilium-palette = "lilium_palette.cli:app"
+
+[tool.setuptools.packages.find]
+include = ["lilium_palette*"]
 
 [tool.setuptools.package-data]
-palette = ["qml/*.qml"]
+lilium_palette = ["qml/*.qml"]
 
 [dependency-groups]
 dev = [

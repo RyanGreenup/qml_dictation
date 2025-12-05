@@ -66,7 +66,7 @@ def search_notes(
     1. SQL pre-filter with subsequence pattern to reduce candidates
     2. Python fuzzy scoring to rank and sort results
     """
-    from palette.fuzzy import build_sql_pattern, rank_matches
+    from lilium_palette.fuzzy import build_sql_pattern, rank_matches
 
     if not query.strip():
         return []

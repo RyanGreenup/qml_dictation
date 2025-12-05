@@ -10,8 +10,8 @@ from PySide6.QtCore import QObject, QUrl, Slot
 from PySide6.QtGui import QClipboard, QGuiApplication
 from PySide6.QtQml import QQmlApplicationEngine
 
-from palette.ipc import IPCServer
-from palette.models import NoteSearchModel
+from lilium_palette.ipc import IPCServer
+from lilium_palette.models import NoteSearchModel
 
 if TYPE_CHECKING:
     pass

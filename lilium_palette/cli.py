@@ -27,7 +27,7 @@ def serve(
     ],
 ) -> None:
     """Start the palette server."""
-    from palette.app import PaletteApp
+    from lilium_palette.app import PaletteApp
 
     palette_app = PaletteApp(db)
     sys.exit(palette_app.run())
@@ -36,7 +36,7 @@ def serve(
 @app.command()
 def toggle() -> None:
     """Toggle palette visibility via IPC."""
-    from palette.ipc import send_toggle
+    from lilium_palette.ipc import send_toggle
 
     if send_toggle():
         typer.echo("Toggled palette")
@@ -48,7 +48,7 @@ def toggle() -> None:
 @app.command()
 def show() -> None:
     """Show the palette via IPC."""
-    from palette.ipc import send_show
+    from lilium_palette.ipc import send_show
 
     if send_show():
         typer.echo("Showing palette")
@@ -60,7 +60,7 @@ def show() -> None:
 @app.command()
 def hide() -> None:
     """Hide the palette via IPC."""
-    from palette.ipc import send_hide
+    from lilium_palette.ipc import send_hide
 
     if send_hide():
         typer.echo("Hiding palette")
@@ -72,7 +72,7 @@ def hide() -> None:
 @app.command()
 def stop() -> None:
     """Stop the palette server."""
-    from palette.ipc import send_stop
+    from lilium_palette.ipc import send_stop
 
     if send_stop():
         typer.echo("Stopped palette server")
@@ -84,7 +84,7 @@ def stop() -> None:
 @app.command()
 def status() -> None:
     """Check if the palette server is running."""
-    from palette.ipc import is_server_running
+    from lilium_palette.ipc import is_server_running
 
     if is_server_running():
         typer.echo("Palette server is running")

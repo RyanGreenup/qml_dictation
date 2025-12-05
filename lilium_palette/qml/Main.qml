@@ -7,7 +7,7 @@ ApplicationWindow {
     id: root
     width: 600
     height: 400
-    visible: true
+    visible: false
     title: "popup"
     flags: Qt.Window | Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint
 
