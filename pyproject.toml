@@ -9,6 +9,12 @@ dependencies = [
     "typer>=0.15.0",
 ]
 
+[project.scripts]
+palette = "palette.cli:app"
+
+[tool.setuptools.package-data]
+palette = ["qml/*.qml"]
+
 [dependency-groups]
 dev = [
     "pyright>=1.1.407",
