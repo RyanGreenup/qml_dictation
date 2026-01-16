@@ -120,6 +120,23 @@ class DictationController(QObject):
             self._clipboard.setText(self._transcribed_text)
 
     @Slot()
+    def copyAsHtml(self) -> None:
+        """Copy transcribed text as HTML to clipboard (Wayland)."""
+        if not self._transcribed_text:
+            return
+
+        import subprocess
+
+        import markdown
+
+        html = markdown.markdown(self._transcribed_text)
+        subprocess.run(
+            ["wl-copy", "-t", "text/html"],
+            input=html.encode(),
+            check=False,
+        )
+
+    @Slot()
     def reset(self) -> None:
         """Reset to idle state."""
         self._reset()

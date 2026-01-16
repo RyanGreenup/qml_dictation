@@ -70,6 +70,9 @@ ApplicationWindow {
             } else if (event.key === Qt.Key_Y) {
                 dictation.copyToClipboard()
                 event.accepted = true
+            } else if (event.key === Qt.Key_H) {
+                dictation.copyAsHtml()
+                event.accepted = true
             }
         }
 
@@ -169,36 +172,63 @@ ApplicationWindow {
             visible: dictation.transcribedText.length === 0 && dictation.state !== 3
         }
 
-        // Copy button (only shown when text exists)
-        Button {
-            id: copyButton
+        // Copy buttons row (only shown when text exists)
+        RowLayout {
             Layout.alignment: Qt.AlignHCenter
-            Layout.preferredWidth: 100
-            Layout.preferredHeight: 36
+            spacing: 8
             visible: dictation.transcribedText.length > 0
 
-            background: Rectangle {
-                color: copyButton.down ? bgOverlay : bgSurface
-                radius: 6
-                border.color: accentGreen
-                border.width: 1
+            Button {
+                id: copyButton
+                Layout.preferredWidth: 80
+                Layout.preferredHeight: 36
+
+                background: Rectangle {
+                    color: copyButton.down ? bgOverlay : bgSurface
+                    radius: 6
+                    border.color: accentGreen
+                    border.width: 1
+                }
+
+                contentItem: Text {
+                    text: "Copy"
+                    font.pixelSize: 13
+                    color: accentGreen
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                }
+
+                onClicked: dictation.copyToClipboard()
             }
 
-            contentItem: Text {
-                text: "Copy"
-                font.pixelSize: 13
-                color: accentGreen
-                horizontalAlignment: Text.AlignHCenter
-                verticalAlignment: Text.AlignVCenter
-            }
+            Button {
+                id: copyHtmlButton
+                Layout.preferredWidth: 100
+                Layout.preferredHeight: 36
 
-            onClicked: dictation.copyToClipboard()
+                background: Rectangle {
+                    color: copyHtmlButton.down ? bgOverlay : bgSurface
+                    radius: 6
+                    border.color: accentBlue
+                    border.width: 1
+                }
+
+                contentItem: Text {
+                    text: "Copy HTML"
+                    font.pixelSize: 13
+                    color: accentBlue
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                }
+
+                onClicked: dictation.copyAsHtml()
+            }
         }
 
         // Help text at bottom
         Text {
             Layout.alignment: Qt.AlignHCenter
-            text: "v: toggle  y: yank  Esc: close"
+            text: "v: toggle  y: yank  h: html  Esc: close"
             color: textSubtle
             font.pixelSize: 11
         }

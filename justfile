@@ -6,7 +6,13 @@ default:
 
 # Install the package
 install:
-    uv pip install --editable .
+    # uv pip install --editable .
+    uv tool install . --force
+    systemctl --user daemon-reload
+    systemctl --user restart dictation
+    hyprctl reload
+    sleep 5
+    echo "Use keybinding Super+Shift+D"
 
 # Uninstall the package
 uninstall:
