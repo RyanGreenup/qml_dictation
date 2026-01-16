@@ -110,9 +110,12 @@ ApplicationWindow {
             enabled: !dictation.isTranscribing
         }
 
-        // Status / Progress text
-        Text {
+        // Status / Progress text (selectable for error messages)
+        TextArea {
+            id: statusText
             Layout.alignment: Qt.AlignHCenter
+            Layout.maximumWidth: parent.width - 24
+            Layout.preferredHeight: contentHeight
             text: {
                 if (dictation.errorMessage) return dictation.errorMessage
                 if (dictation.progressMessage) return dictation.progressMessage
@@ -122,9 +125,12 @@ ApplicationWindow {
             color: dictation.errorMessage ? accentRed : textSubtle
             font.pixelSize: 12
             visible: text.length > 0
-            wrapMode: Text.WordWrap
-            Layout.maximumWidth: parent.width - 24
+            wrapMode: TextArea.Wrap
+            readOnly: true
+            selectByMouse: true
             horizontalAlignment: Text.AlignHCenter
+            background: null
+            padding: 0
         }
 
         // Transcribed text area
