@@ -32,6 +32,7 @@ class DictationController(QObject):
     transcribedTextChanged = Signal()
     errorMessageChanged = Signal()
     progressMessageChanged = Signal()
+    canUndoChanged = Signal()
 
     def __init__(
         self,
@@ -41,6 +42,7 @@ class DictationController(QObject):
         super().__init__(parent)
         self._state: DictationState = DictationState.IDLE
         self._transcribed_text: str = ""
+        self._original_text: str = ""  # For undo functionality
         self._error_message: str = ""
         self._progress_message: str = ""
         self._clipboard = clipboard
@@ -95,6 +97,13 @@ class DictationController(QObject):
         """True if idle and ready to record."""
         return self._state == DictationState.IDLE
 
+    @Property(bool, notify=canUndoChanged)
+    def canUndo(self) -> bool:
+        """True if undo is available (text has been formatted)."""
+        return bool(
+            self._original_text and self._original_text != self._transcribed_text
+        )
+
     # --- Slots for QML ---
 
     @Slot()
@@ -135,6 +144,82 @@ class DictationController(QObject):
             input=html.encode(),
             check=False,
         )
+
+    @Slot()
+    def formatWithGpt(self) -> None:
+        """Format text using GPT-4o."""
+        if not self._transcribed_text:
+            return
+
+        import os
+
+        from openai import OpenAI
+
+        api_key = os.environ.get("OPENAI_API_KEY")
+        if not api_key:
+            self._error_message = "OPENAI_API_KEY not set"
+            self.errorMessageChanged.emit()
+            return
+
+        # Store original for undo (only if not already stored)
+        if not self._original_text:
+            self._original_text = self._transcribed_text
+
+        self._progress_message = "Formatting with GPT..."
+        self.progressMessageChanged.emit()
+
+        try:
+            client = OpenAI(api_key=api_key)
+            response = client.chat.completions.create(
+                model="gpt-4o",
+                messages=[
+                    {
+                        "role": "system",
+                        "content": """You are a text editor that formats and corrects transcribed speech.
+
+Your task:
+1. Fix grammar, spelling, and punctuation errors
+2. Structure the text using markdown formatting where appropriate:
+   - Use headings (##, ###) for distinct topics or sections
+   - Use bullet points for lists
+   - Use **bold** for emphasis on key terms
+   - Use paragraphs to separate ideas
+3. Preserve the original meaning exactly - do not add, remove, or change any ideas
+4. Keep the same tone and voice
+5. Do not add any commentary or explanations - output only the formatted text""",
+                    },
+                    {"role": "user", "content": self._transcribed_text},
+                ],
+                temperature=0.3,
+            )
+
+            formatted = response.choices[0].message.content
+            self._transcribed_text = formatted
+            self._progress_message = ""
+            self.transcribedTextChanged.emit()
+            self.progressMessageChanged.emit()
+            self.canUndoChanged.emit()
+
+        except Exception as e:
+            self._error_message = f"GPT formatting failed: {e}"
+            self._progress_message = ""
+            self.errorMessageChanged.emit()
+            self.progressMessageChanged.emit()
+
+    @Slot()
+    def undoFormat(self) -> None:
+        """Revert to original transcribed text."""
+        if self._original_text:
+            self._transcribed_text = self._original_text
+            self._original_text = ""
+            self.transcribedTextChanged.emit()
+            self.canUndoChanged.emit()
+
+    @Slot()
+    def copyOriginal(self) -> None:
+        """Copy original (unformatted) text to clipboard."""
+        if self._clipboard is not None and self._original_text:
+            self._clipboard.setText(self._original_text)
 
     @Slot()
     def reset(self) -> None:
@@ -182,11 +267,13 @@ class DictationController(QObject):
     def _on_transcription_finished(self, text: str) -> None:
         """Handle transcription completion."""
         self._transcribed_text = text
+        self._original_text = ""  # Clear any previous original
         self._progress_message = ""
         self._state = DictationState.COMPLETED
         self.stateChanged.emit()
         self.transcribedTextChanged.emit()
         self.progressMessageChanged.emit()
+        self.canUndoChanged.emit()
 
         # Auto-copy to clipboard
         self.copyToClipboard()
@@ -208,6 +295,7 @@ class DictationController(QObject):
     def _reset(self) -> None:
         """Reset to idle state."""
         self._transcribed_text = ""
+        self._original_text = ""
         self._error_message = ""
         self._progress_message = ""
         self._state = DictationState.IDLE
@@ -215,3 +303,4 @@ class DictationController(QObject):
         self.transcribedTextChanged.emit()
         self.errorMessageChanged.emit()
         self.progressMessageChanged.emit()
+        self.canUndoChanged.emit()

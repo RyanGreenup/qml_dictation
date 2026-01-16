@@ -73,6 +73,15 @@ ApplicationWindow {
             } else if (event.key === Qt.Key_H) {
                 dictation.copyAsHtml()
                 event.accepted = true
+            } else if (event.key === Qt.Key_F) {
+                dictation.formatWithGpt()
+                event.accepted = true
+            } else if (event.key === Qt.Key_U) {
+                dictation.undoFormat()
+                event.accepted = true
+            } else if (event.key === Qt.Key_O) {
+                dictation.copyOriginal()
+                event.accepted = true
             }
         }
 
@@ -180,8 +189,8 @@ ApplicationWindow {
 
             Button {
                 id: copyButton
-                Layout.preferredWidth: 80
-                Layout.preferredHeight: 36
+                Layout.preferredWidth: 60
+                Layout.preferredHeight: 32
 
                 background: Rectangle {
                     color: copyButton.down ? bgOverlay : bgSurface
@@ -192,7 +201,7 @@ ApplicationWindow {
 
                 contentItem: Text {
                     text: "Copy"
-                    font.pixelSize: 13
+                    font.pixelSize: 12
                     color: accentGreen
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
@@ -203,8 +212,8 @@ ApplicationWindow {
 
             Button {
                 id: copyHtmlButton
-                Layout.preferredWidth: 100
-                Layout.preferredHeight: 36
+                Layout.preferredWidth: 60
+                Layout.preferredHeight: 32
 
                 background: Rectangle {
                     color: copyHtmlButton.down ? bgOverlay : bgSurface
@@ -214,8 +223,8 @@ ApplicationWindow {
                 }
 
                 contentItem: Text {
-                    text: "Copy HTML"
-                    font.pixelSize: 13
+                    text: "HTML"
+                    font.pixelSize: 12
                     color: accentBlue
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
@@ -223,12 +232,59 @@ ApplicationWindow {
 
                 onClicked: dictation.copyAsHtml()
             }
+
+            Button {
+                id: formatButton
+                Layout.preferredWidth: 70
+                Layout.preferredHeight: 32
+
+                background: Rectangle {
+                    color: formatButton.down ? bgOverlay : bgSurface
+                    radius: 6
+                    border.color: accentYellow
+                    border.width: 1
+                }
+
+                contentItem: Text {
+                    text: "Format"
+                    font.pixelSize: 12
+                    color: accentYellow
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                }
+
+                onClicked: dictation.formatWithGpt()
+            }
+
+            Button {
+                id: undoButton
+                Layout.preferredWidth: 60
+                Layout.preferredHeight: 32
+                visible: dictation.canUndo
+
+                background: Rectangle {
+                    color: undoButton.down ? bgOverlay : bgSurface
+                    radius: 6
+                    border.color: accentRed
+                    border.width: 1
+                }
+
+                contentItem: Text {
+                    text: "Undo"
+                    font.pixelSize: 12
+                    color: accentRed
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                }
+
+                onClicked: dictation.undoFormat()
+            }
         }
 
         // Help text at bottom
         Text {
             Layout.alignment: Qt.AlignHCenter
-            text: "v: toggle  y: yank  h: html  Esc: close"
+            text: "v: toggle  y: yank  h: html  f: format  u: undo  o: orig  Esc: close"
             color: textSubtle
             font.pixelSize: 11
         }
