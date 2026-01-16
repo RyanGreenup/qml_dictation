@@ -67,6 +67,9 @@ ApplicationWindow {
             if (event.key === Qt.Key_V) {
                 dictation.toggle()
                 event.accepted = true
+            } else if (event.key === Qt.Key_Y) {
+                dictation.copyToClipboard()
+                event.accepted = true
             }
         }
 
@@ -195,7 +198,7 @@ ApplicationWindow {
         // Help text at bottom
         Text {
             Layout.alignment: Qt.AlignHCenter
-            text: "v: toggle  Esc: close"
+            text: "v: toggle  y: yank  Esc: close"
             color: textSubtle
             font.pixelSize: 11
         }
