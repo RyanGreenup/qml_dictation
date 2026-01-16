@@ -39,6 +39,35 @@ systemctl --user daemon-reload
 systemctl --user enable --now dictation
 ```
 
+## BSD Systems (cron @reboot)
+
+On BSD systems without systemd, use cron's `@reboot` directive to start the service at login.
+
+```bash
+# Edit your crontab
+crontab -e
+```
+
+Add:
+
+```cron
+@reboot sleep 5 && DISPLAY=:0 ~/.local/bin/dictation serve
+```
+
+The `sleep 5` ensures the graphical session is ready. Adjust `DISPLAY` if needed (or use `WAYLAND_DISPLAY` for Wayland-only setups).
+
+To stop the service:
+
+```bash
+pkill -f "dictation serve"
+```
+
+To check if it's running:
+
+```bash
+pgrep -f "dictation serve" && echo "Running" || echo "Not running"
+```
+
 ## Configure Hyprland Keybinding
 
 Add to your Hyprland config (e.g., `~/.config/hypr/hyprland.conf` or a sourced file):
