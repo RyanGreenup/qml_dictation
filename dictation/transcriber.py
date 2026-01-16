@@ -17,6 +17,25 @@ DEFAULT_MODEL_SIZE = os.environ.get("DICTATION_MODEL", "base")
 DEFAULT_DEVICE = "auto"  # auto, cpu, cuda
 DEFAULT_COMPUTE_TYPE = "int8"  # int8, float16, float32
 
+# Module-level model cache (persists for app lifetime)
+_cached_model: WhisperModel | None = None
+_cached_model_size: str | None = None
+
+
+def get_model(model_size: str) -> WhisperModel:
+    """Get or create the Whisper model (cached at module level)."""
+    global _cached_model, _cached_model_size
+
+    if _cached_model is None or _cached_model_size != model_size:
+        _cached_model = WhisperModel(
+            model_size,
+            device=DEFAULT_DEVICE,
+            compute_type=DEFAULT_COMPUTE_TYPE,
+        )
+        _cached_model_size = model_size
+
+    return _cached_model
+
 
 class TranscriptionWorker(QObject):
     """Worker that runs transcription in a separate thread."""
@@ -27,7 +46,6 @@ class TranscriptionWorker(QObject):
 
     def __init__(self, parent: QObject | None = None) -> None:
         super().__init__(parent)
-        self._model: WhisperModel | None = None
         self._audio_path: Path | None = None
         self._model_size: str = DEFAULT_MODEL_SIZE
 
@@ -48,18 +66,13 @@ class TranscriptionWorker(QObject):
         try:
             self.progress.emit("Loading model...")
 
-            # Lazy-load model (cached after first load)
-            if self._model is None:
-                self._model = WhisperModel(
-                    self._model_size,
-                    device=DEFAULT_DEVICE,
-                    compute_type=DEFAULT_COMPUTE_TYPE,
-                )
+            # Get cached model
+            model = get_model(self._model_size)
 
             self.progress.emit("Transcribing...")
 
             # Transcribe
-            segments, info = self._model.transcribe(
+            segments, info = model.transcribe(
                 str(self._audio_path),
                 beam_size=5,
                 vad_filter=True,  # Voice activity detection
