@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 import sounddevice as sd
+from scipy.signal import butter, sosfilt
 
 if TYPE_CHECKING:
     from numpy.typing import NDArray
@@ -17,6 +18,19 @@ if TYPE_CHECKING:
 SAMPLE_RATE = 16000  # 16kHz - optimal for Whisper
 CHANNELS = 1  # Mono
 DTYPE = np.float32  # sounddevice default
+BANDPASS_LOW = 80  # Hz - removes low-frequency rumble
+BANDPASS_HIGH = 7000  # Hz - removes high-frequency hiss
+
+
+def apply_bandpass_filter(
+    audio: NDArray[np.float32], sample_rate: int
+) -> NDArray[np.float32]:
+    """Apply bandpass filter to isolate speech frequencies (80Hz - 7kHz)."""
+    sos = butter(
+        4, [BANDPASS_LOW, BANDPASS_HIGH], btype="band", fs=sample_rate, output="sos"
+    )
+    filtered = np.asarray(sosfilt(sos, audio), dtype=np.float32)
+    return filtered
 
 
 class AudioRecorder:
@@ -52,8 +66,9 @@ class AudioRecorder:
             # Create empty audio data
             audio_data = np.array([], dtype=np.float32)
         else:
-            # Concatenate all frames
+            # Concatenate all frames and apply bandpass filter
             audio_data = np.concatenate(self._frames, axis=0)
+            audio_data = apply_bandpass_filter(audio_data, SAMPLE_RATE)
 
         # Save to temporary WAV file
         temp_file = tempfile.NamedTemporaryFile(suffix=".wav", delete=False)
