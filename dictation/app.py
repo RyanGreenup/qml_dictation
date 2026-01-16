@@ -10,6 +10,7 @@ from PySide6.QtCore import QObject, QUrl, Slot
 from PySide6.QtGui import QClipboard, QGuiApplication
 from PySide6.QtQml import QQmlApplicationEngine
 
+from dictation.controller import DictationController
 from dictation.ipc import IPCServer
 
 if TYPE_CHECKING:
@@ -37,6 +38,7 @@ class DictationApp:
         self._engine: QQmlApplicationEngine | None = None
         self._ipc_server: IPCServer | None = None
         self._clipboard_helper: ClipboardHelper | None = None
+        self._dictation_controller: DictationController | None = None
 
     def run(self) -> int:
         """Run the application. Returns exit code."""
@@ -44,10 +46,11 @@ class DictationApp:
         self._app.setApplicationName("Dictation")
         self._app.setOrganizationName("Dictation")
 
-        # Set up clipboard helper
+        # Set up clipboard helper and dictation controller
         clipboard = self._app.clipboard()
         if clipboard is not None:
             self._clipboard_helper = ClipboardHelper(clipboard)
+            self._dictation_controller = DictationController(clipboard)
 
         # Set up IPC server
         self._ipc_server = IPCServer()
@@ -65,6 +68,7 @@ class DictationApp:
         # Register context properties
         root_context = self._engine.rootContext()
         root_context.setContextProperty("clipboard", self._clipboard_helper)
+        root_context.setContextProperty("dictation", self._dictation_controller)
 
         # Load QML
         qml_file = Path(__file__).parent / "qml" / "Main.qml"
