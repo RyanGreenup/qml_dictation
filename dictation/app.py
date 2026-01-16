@@ -10,8 +10,7 @@ from PySide6.QtCore import QObject, QUrl, Slot
 from PySide6.QtGui import QClipboard, QGuiApplication
 from PySide6.QtQml import QQmlApplicationEngine
 
-from lilium_palette.ipc import IPCServer
-from lilium_palette.models import NoteSearchModel
+from dictation.ipc import IPCServer
 
 if TYPE_CHECKING:
     pass
@@ -30,26 +29,20 @@ class ClipboardHelper(QObject):
         self._clipboard.setText(text)
 
 
-class PaletteApp:
-    """Main palette application."""
+class DictationApp:
+    """Main dictation application."""
 
-    def __init__(self, db_path: Path) -> None:
-        self._db_path = db_path
+    def __init__(self) -> None:
         self._app: QGuiApplication | None = None
         self._engine: QQmlApplicationEngine | None = None
-        self._search_model: NoteSearchModel | None = None
         self._ipc_server: IPCServer | None = None
         self._clipboard_helper: ClipboardHelper | None = None
 
     def run(self) -> int:
         """Run the application. Returns exit code."""
         self._app = QGuiApplication(sys.argv)
-        self._app.setApplicationName("Link Palette")
-        self._app.setOrganizationName("Palette")
-
-        # Set up search model
-        self._search_model = NoteSearchModel()
-        self._search_model.set_db_path(self._db_path)
+        self._app.setApplicationName("Dictation")
+        self._app.setOrganizationName("Dictation")
 
         # Set up clipboard helper
         clipboard = self._app.clipboard()
@@ -71,7 +64,6 @@ class PaletteApp:
 
         # Register context properties
         root_context = self._engine.rootContext()
-        root_context.setContextProperty("searchModel", self._search_model)
         root_context.setContextProperty("clipboard", self._clipboard_helper)
 
         # Load QML

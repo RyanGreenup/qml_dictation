@@ -1,0 +1,15 @@
+#!/sbin/openrc-run
+
+name="dictation"
+description="Dictation"
+
+command="$HOME/.local/bin/dictation"
+command_args="serve"
+command_user="${USER}"
+command_background=true
+pidfile="/run/user/$(id -u)/dictation.pid"
+
+depend() {
+    need localmount
+    after bootmisc
+}

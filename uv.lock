@@ -23,7 +23,7 @@ wheels = [
 ]
 
 [[package]]
-name = "lilium-palette"
+name = "dictation"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [

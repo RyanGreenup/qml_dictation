@@ -1,7 +1,7 @@
 [project]
-name = "lilium-palette"
+name = "dictation"
 version = "0.1.0"
-description = "Link palette for searching notes and generating markdown/org links"
+description = "Dictation application"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
@@ -10,13 +10,13 @@ dependencies = [
 ]
 
 [project.scripts]
-lilium-palette = "lilium_palette.cli:app"
+dictation = "dictation.cli:app"
 
 [tool.setuptools.packages.find]
-include = ["lilium_palette*"]
+include = ["dictation*"]
 
 [tool.setuptools.package-data]
-lilium_palette = ["qml/*.qml"]
+dictation = ["qml/*.qml"]
 
 [dependency-groups]
 dev = [

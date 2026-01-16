@@ -1,4 +1,4 @@
-# Lilium Palette justfile
+# Dictation justfile
 
 # Default recipe - list available commands
 default:
@@ -10,7 +10,7 @@ install:
 
 # Uninstall the package
 uninstall:
-    uv pip uninstall lilium-palette
+    uv pip uninstall dictation
 
 # Reinstall the package
 reinstall: uninstall
@@ -20,37 +20,37 @@ reinstall: uninstall
 check:
     uv run -- pyright
 
-# Create/recreate test database
-test-db:
-    uv run -- python scripts/create_test_db.py
-
 # Run in development mode
-dev db="test.db":
-    uv run -- python main.py serve {{ db }}
+dev:
+    uv run -- python main.py serve
 
-# Toggle the palette (requires running server)
+# Start the server
+start:
+    uv run -- python main.py start
+
+# Toggle the window (requires running server)
 toggle:
     uv run -- python main.py toggle
 
-# Show palette status
+# Show server status
 status:
     uv run -- python main.py status
 
-# Stop the palette server
+# Stop the server
 stop:
     uv run -- python main.py stop
 
 # Install openrc service (requires sudo)
 install-service:
-    sudo cp openrc/lilium-palette /etc/init.d/lilium-palette
-    sudo chmod +x /etc/init.d/lilium-palette
-    @echo "Service installed. Enable with: sudo rc-update add lilium-palette default"
+    sudo cp openrc/dictation /etc/init.d/dictation
+    sudo chmod +x /etc/init.d/dictation
+    @echo "Service installed. Enable with: sudo rc-update add dictation default"
 
 # Uninstall openrc service (requires sudo)
 uninstall-service:
-    -sudo rc-service lilium-palette stop 2>/dev/null
-    -sudo rc-update del lilium-palette default 2>/dev/null
-    sudo rm -f /etc/init.d/lilium-palette
+    -sudo rc-service dictation stop 2>/dev/null
+    -sudo rc-update del dictation default 2>/dev/null
+    sudo rm -f /etc/init.d/dictation
     @echo "Service uninstalled"
 
 # Reinstall openrc service

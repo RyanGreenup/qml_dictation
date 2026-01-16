@@ -1,4 +1,4 @@
-"""IPC server and client for palette toggle functionality."""
+"""IPC server and client for dictation toggle functionality."""
 
 from __future__ import annotations
 
@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 def get_socket_path() -> Path:
     """Get the socket path for IPC communication."""
     uid = os.getuid()
-    return Path(f"/tmp/lilium-palette-{uid}.sock")
+    return Path(f"/tmp/dictation-{uid}.sock")
 
 
 class IPCServer(QObject):
@@ -102,7 +102,7 @@ class IPCServer(QObject):
 
 
 def send_command(command: str, timeout: float = 1.0) -> bool:
-    """Send a command to the palette server. Returns True on success."""
+    """Send a command to the dictation server. Returns True on success."""
     socket_path = get_socket_path()
 
     if not socket_path.exists():
@@ -120,25 +120,25 @@ def send_command(command: str, timeout: float = 1.0) -> bool:
 
 
 def send_toggle() -> bool:
-    """Send a toggle command to the palette server."""
+    """Send a toggle command to the dictation server."""
     return send_command("TOGGLE")
 
 
 def send_show() -> bool:
-    """Send a show command to the palette server."""
+    """Send a show command to the dictation server."""
     return send_command("SHOW")
 
 
 def send_hide() -> bool:
-    """Send a hide command to the palette server."""
+    """Send a hide command to the dictation server."""
     return send_command("HIDE")
 
 
 def send_stop() -> bool:
-    """Send a stop command to the palette server."""
+    """Send a stop command to the dictation server."""
     return send_command("STOP")
 
 
 def is_server_running() -> bool:
-    """Check if the palette server is running."""
+    """Check if the dictation server is running."""
     return send_command("PING")

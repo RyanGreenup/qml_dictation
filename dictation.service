@@ -1,10 +1,10 @@
 [Unit]
-Description=Lilium Palette - Note link search
+Description=Dictation
 After=graphical-session.target
 
 [Service]
 Type=simple
-ExecStart=%h/.local/bin/lilium-palette serve %h/notes/notes.db
+ExecStart=%h/.local/bin/dictation serve
 Restart=on-failure
 RestartSec=5
 

@@ -1,4 +1,4 @@
-"""Link palette application for searching notes."""
+"""Dictation application."""
 
 from __future__ import annotations
 
