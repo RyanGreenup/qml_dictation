@@ -44,6 +44,7 @@ class DictationApp:
         """Run the application. Returns exit code."""
         self._app = QGuiApplication(sys.argv)
         self._app.setApplicationName("Dictation")
+        self._app.setDesktopFileName("dictation")
         self._app.setOrganizationName("Dictation")
 
         # Set up clipboard helper and dictation controller
